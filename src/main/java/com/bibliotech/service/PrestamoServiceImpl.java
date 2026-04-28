@@ -1,5 +1,8 @@
 package com.bibliotech.service;
 
+import com.bibliotech.exception.LimitePrestamosAlcanzadoException;
+import com.bibliotech.exception.PrestamoNoEncontradoException;
+import com.bibliotech.exception.RecursoNoDisponibleException;
 import com.bibliotech.model.EstadoPrestamo;
 import com.bibliotech.model.Prestamo;
 import com.bibliotech.model.Recurso;
@@ -26,7 +29,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 .noneMatch(p -> p.getEstado() == EstadoPrestamo.ACTIVO);
 
         if (!estaDisponible) {
-            throw new RuntimeException("El recurso no está disponible: " + recurso.titulo());
+            throw new RecursoNoDisponibleException(recurso.titulo());
         }
 
         // Validar límite de préstamos del socio
@@ -36,7 +39,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 .count();
 
         if (prestamosActivos >= socio.getLimiteLibros()) {
-            throw new RuntimeException("El socio alcanzó su límite de préstamos: " + socio.getLimiteLibros());
+            throw new LimitePrestamosAlcanzadoException(socio.getLimiteLibros());
         }
 
         // Registrar el préstamo
@@ -57,7 +60,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 .filter(p -> p.getEstado() == EstadoPrestamo.ACTIVO)
                 .filter(p -> p.getSocio().getDni() == socio.getDni())
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("No se encontró un préstamo activo para este socio y recurso"));
+                .orElseThrow(PrestamoNoEncontradoException::new);
 
         // Calcular días de retraso
         LocalDate hoy = LocalDate.now();
