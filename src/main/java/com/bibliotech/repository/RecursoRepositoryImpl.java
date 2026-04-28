@@ -40,11 +40,7 @@ public class RecursoRepositoryImpl implements RecursoRepository {
     @Override
     public List<Recurso> buscarPorAutor(String autor) {
         return recursos.stream()
-                .filter(r -> {
-                    if (r instanceof Libro l) return l.autor().toLowerCase().contains(autor.toLowerCase());
-                    if (r instanceof EBook e) return e.autor().toLowerCase().contains(autor.toLowerCase());
-                    return false;
-                })
+                .filter(r -> r.autor().toLowerCase().contains(autor.toLowerCase()))
                 .toList();
     }
 
