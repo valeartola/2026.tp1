@@ -5,5 +5,5 @@ public record EBook(String isbn,
                     String autor,
                     int anio,
                     Categoria categoria,
-                    String formato
+                    String formatoDigital
 ) implements Recurso {}
